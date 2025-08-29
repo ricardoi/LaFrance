@@ -62,3 +62,33 @@ esearch -db nuccore -query \
 | elink -target protein \
 | efetch -format fasta > mycovirus_proteins_from_complete_genomes.faa
 ```
+
+Create the databases for complete genome, proteins from complete genomes, all nucleotide sequences and proteins
+```bash
+makeblastdb -in mycoviruses_by_family.fasta -dbtype nucl -out virusDBnc -parse_seqids -hash_index -title "Mycoviruses (nucl)"
+
+makeblastdb -in mycoviruses_by_family_protein.fasta -dbtype prot -out virusDBaa -parse_seqids -hash_index -title "Mycoviruses (aa)"
+
+makeblastdb -in mycoviruses_by_family-completegenome.fasta -dbtype nucl -out virusDBgeno -parse_seqids -hash_index -title "Mycoviruses (geno)"
+
+makeblastdb -in mycovirus_proteins_from_complete_genomes.faa -dbtype prot -out virusDBprot -parse_seqids -hash_index -title "Mycoviruses (prot)"
+```
+blastnx, position 1, indicates the number of hits, in this case 3, although recommeded is 5; position 2, calls the database for nt; position 3, calls the database for aa. 
+```
+sh ~/git_local/LaFrance/script/blastnx.bash fof.txt 3 ~/git_local/LaFrance/databases/virusDBgeno ~/git_local/LaFrance/databases/virusDBaa
+```
+
+# R session
+
+```R
+blast <- read.table("blast_results/blastn/SW57_scaffolds_subset_blastn_res.tsv", sep = "\t")
+header = c("qseqid", "sseqid", "pident", "length", "qcovs", "evalue", "bitscore", "staxids", "sscinames", "scomnames", "sskingdoms", "stitle")
+colnames(blast) <- header
+head(blast)
+
+blast$SeqID <- sapply(strsplit(blast$sseqid, "\\|"), `[`, 2)
+toRetrieve <- blast$SeqID |> unique()
+write.table(toRetrieve, "AccNo_to_retrieve.txt")
+```
+
+Next steps: Retrieve the nucloetide Acc. Nos. for sequence clustering. 
