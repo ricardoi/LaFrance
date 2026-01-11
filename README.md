@@ -421,6 +421,26 @@ blastnx, position 1, indicates the number of hits, in this case 3, although reco
 sh ~/git_local/LaFrance/script/blastnx.bash fof.txt 3 ~/git_local/LaFrance/databases/virusDBgeno ~/git_local/LaFrance/databases/virusDBaa
 ```
 
+### Blastn visual output instead of the innestable vsearch
+```
+makeblastdb \
+  -in Tojo_whu_AccNo.fasta \
+  -dbtype nucl \
+  -parse_seqids \
+  -out Tojo_whu_AccNo
+
+blastn -query ../ToJo1/Tojo_wohost/AbTj_1-20k_scaffolds_subset.fasta \
+  -db Tojo_whu_AccNo \
+  -task megablast \
+  -perc_identity 60 \
+  -qcov_hsp_perc 30 \
+  -outfmt 6 \
+  -num_threads 6 \
+  > Tojo_AccNo.blastn60.tsv
+```
+
+
+
 # R session
 
 ```R
